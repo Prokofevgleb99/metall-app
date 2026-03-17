@@ -1,0 +1,1200 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Центр гибки металла</title>
+<script src="https://telegram.org/js/telegram-web-app.js"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Manrope:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --red: #c0392b;
+    --red2: #e8453a;
+    --red-bg: #fdf0ef;
+    --dark: #1a1a1a;
+    --mid: #444;
+    --muted: #888;
+    --border: rgba(0,0,0,0.08);
+    --border2: rgba(0,0,0,0.14);
+    --bg: #f4f3ef;
+    --card: #ffffff;
+    --surface: #eeede9;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+
+  html, body {
+    height: 100%;
+    background: var(--tg-theme-bg-color, var(--bg));
+    color: var(--tg-theme-text-color, var(--dark));
+    font-family: 'Manrope', sans-serif;
+    font-size: 14px;
+    font-weight: 400;
+    line-height: 1.5;
+    overscroll-behavior: none;
+  }
+
+  /* ─── LAYOUT ─── */
+  .app {
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    height: 100dvh;
+    max-width: 480px;
+    margin: 0 auto;
+  }
+
+  /* ─── HEADER ─── */
+  .header {
+    background: var(--card);
+    border-bottom: 1px solid var(--border);
+    padding: 14px 16px 12px;
+    flex-shrink: 0;
+  }
+  .header-top {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 14px;
+  }
+  .logo-box {
+    width: 36px; height: 36px;
+    background: var(--dark);
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+  }
+  .logo-box svg { width: 18px; height: 18px; }
+  .logo-info { flex: 1; }
+  .logo-name {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 15px; letter-spacing: .07em;
+    color: var(--dark); line-height: 1.1;
+  }
+  .logo-city { font-size: 11px; color: var(--muted); letter-spacing: .05em; }
+  .header-phone {
+    font-size: 13px; font-weight: 600;
+    color: var(--red); text-decoration: none;
+    border: 1px solid var(--red);
+    padding: 5px 12px;
+    border-radius: 4px;
+    white-space: nowrap;
+    transition: all .2s;
+  }
+  .header-phone:active { background: var(--red); color: #fff; }
+
+  /* ─── NAV TABS ─── */
+  .nav {
+    display: flex;
+    overflow-x: auto; scrollbar-width: none;
+    gap: 0;
+    border-bottom: none;
+  }
+  .nav::-webkit-scrollbar { display: none; }
+  .nav-btn {
+    flex-shrink: 0;
+    padding: 8px 14px;
+    font-size: 12px; font-weight: 500;
+    letter-spacing: .04em;
+    color: var(--muted);
+    background: none; border: none;
+    border-bottom: 2px solid transparent;
+    cursor: pointer;
+    transition: color .2s, border-color .2s;
+    white-space: nowrap;
+    font-family: 'Manrope', sans-serif;
+  }
+  .nav-btn.active { color: var(--red); border-bottom-color: var(--red); }
+
+  /* ─── CONTENT ─── */
+  .content {
+    flex: 1;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+  }
+  .content::-webkit-scrollbar { display: none; }
+
+  .page { display: none; padding: 16px; padding-bottom: 24px; }
+  .page.active { display: block; }
+
+  /* ─── CARDS ─── */
+  .card {
+    background: var(--card);
+    border-radius: 12px;
+    border: 1px solid var(--border);
+    padding: 16px;
+    margin-bottom: 10px;
+  }
+  .card-title {
+    font-size: 13px; font-weight: 600;
+    color: var(--dark); margin-bottom: 12px;
+    display: flex; align-items: center; gap: 8px;
+  }
+  .card-title-dot {
+    width: 3px; height: 16px; background: var(--red);
+    border-radius: 2px; flex-shrink: 0;
+  }
+
+  /* ─── SECTION HEAD ─── */
+  .sec-head { margin-bottom: 14px; }
+  .sec-tag {
+    font-size: 10px; letter-spacing: .2em; text-transform: uppercase;
+    color: var(--red); display: flex; align-items: center; gap: 6px;
+    margin-bottom: 4px;
+  }
+  .sec-tag::before { content: ''; width: 16px; height: 1px; background: var(--red); }
+  .sec-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 22px; letter-spacing: .04em; color: var(--dark); line-height: 1.1;
+  }
+
+  /* ─── HOME PAGE ─── */
+  .hero-card {
+    background: var(--dark);
+    border-radius: 14px;
+    padding: 20px;
+    margin-bottom: 12px;
+    position: relative;
+    overflow: hidden;
+  }
+  .hero-card::before {
+    content: '';
+    position: absolute; right: -20px; top: -20px;
+    width: 140px; height: 140px;
+    border-radius: 50%;
+    border: 30px solid rgba(192,57,43,0.15);
+    pointer-events: none;
+  }
+  .hero-eyebrow {
+    font-size: 10px; letter-spacing: .22em; text-transform: uppercase;
+    color: var(--red2); margin-bottom: 10px;
+  }
+  .hero-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 28px; letter-spacing: .04em;
+    color: #fff; line-height: 1.0; margin-bottom: 8px;
+  }
+  .hero-title em { color: var(--red2); font-style: normal; }
+  .hero-desc {
+    font-size: 12px; color: rgba(255,255,255,0.5);
+    line-height: 1.7; margin-bottom: 16px;
+  }
+  .hero-stats {
+    display: grid; grid-template-columns: repeat(3,1fr);
+    gap: 1px; background: rgba(255,255,255,.08);
+    border-radius: 8px; overflow: hidden; margin-bottom: 16px;
+  }
+  .hero-stat {
+    background: rgba(255,255,255,.04);
+    padding: 10px 8px; text-align: center;
+  }
+  .hero-stat-n {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 20px; color: #fff; letter-spacing: .04em;
+    line-height: 1; display: block;
+  }
+  .hero-stat-n em { color: var(--red2); font-style: normal; font-size: 14px; }
+  .hero-stat-l {
+    font-size: 9px; letter-spacing: .1em; text-transform: uppercase;
+    color: rgba(255,255,255,.35); display: block; margin-top: 3px;
+  }
+  .btn-hero {
+    width: 100%; padding: 12px;
+    background: var(--red); color: #fff;
+    font-family: 'Manrope', sans-serif;
+    font-size: 12px; font-weight: 600; letter-spacing: .12em; text-transform: uppercase;
+    border: none; border-radius: 8px; cursor: pointer;
+    transition: background .2s;
+  }
+  .btn-hero:active { background: #a93226; }
+
+  .quick-grid {
+    display: grid; grid-template-columns: 1fr 1fr;
+    gap: 8px; margin-bottom: 10px;
+  }
+  .quick-card {
+    background: var(--card); border: 1px solid var(--border);
+    border-radius: 12px; padding: 14px 12px;
+    cursor: pointer; transition: border-color .2s;
+    text-align: left;
+  }
+  .quick-card:active { border-color: var(--red); background: var(--red-bg); }
+  .quick-icon {
+    width: 32px; height: 32px;
+    background: var(--surface);
+    border-radius: 8px;
+    display: flex; align-items: center; justify-content: center;
+    margin-bottom: 10px;
+  }
+  .quick-icon svg { width: 16px; height: 16px; stroke: var(--red); fill: none; stroke-width: 1.5; stroke-linecap: round; stroke-linejoin: round; }
+  .quick-label { font-size: 12px; font-weight: 600; color: var(--dark); line-height: 1.3; }
+  .quick-sub { font-size: 11px; color: var(--muted); margin-top: 3px; }
+
+  /* ─── CALCULATOR ─── */
+  .field-label {
+    font-size: 11px; font-weight: 500; color: var(--muted);
+    letter-spacing: .05em; margin-bottom: 5px; display: block;
+  }
+  .field-input, .field-select {
+    width: 100%; height: 44px;
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: 8px; color: var(--dark);
+    font-family: 'Manrope', sans-serif; font-size: 14px; font-weight: 500;
+    padding: 0 12px; outline: none; -webkit-appearance: none; appearance: none;
+    transition: border-color .2s;
+  }
+  .field-input:focus, .field-select:focus { border-color: var(--red); }
+  .field-wrap { margin-bottom: 10px; position: relative; }
+  .field-wrap .select-arrow {
+    position: absolute; right: 12px; top: 50%; transform: translateY(-50%);
+    pointer-events: none;
+  }
+  .field-wrap .select-arrow svg { width: 14px; height: 14px; stroke: var(--muted); fill: none; stroke-width: 2; stroke-linecap: round; }
+
+  .toggle-row {
+    display: grid; grid-template-columns: 1fr 1fr;
+    gap: 2px; background: var(--border);
+    border-radius: 8px; overflow: hidden; margin-bottom: 12px;
+  }
+  .toggle-btn {
+    padding: 10px; font-size: 12px; font-weight: 600;
+    color: var(--muted); background: var(--surface);
+    border: none; cursor: pointer; transition: all .2s;
+    font-family: 'Manrope', sans-serif;
+  }
+  .toggle-btn.active { background: var(--dark); color: #fff; }
+
+  .result-card {
+    background: var(--dark); border-radius: 12px; padding: 16px;
+    margin: 14px 0 10px; display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px;
+  }
+  .res-col { text-align: center; }
+  .res-num {
+    font-family: 'Bebas Neue', sans-serif; font-size: 24px; letter-spacing: .04em;
+    color: #fff; display: block; line-height: 1;
+  }
+  .res-num.accent { color: var(--red2); font-size: 20px; }
+  .res-unit { font-size: 10px; color: rgba(255,255,255,.35); }
+  .res-lbl { font-size: 9px; letter-spacing: .1em; text-transform: uppercase; color: rgba(255,255,255,.3); display: block; margin-top: 4px; }
+
+  .calc-note {
+    font-size: 11px; color: var(--muted); line-height: 1.6;
+    border-left: 2px solid var(--border2); padding-left: 10px;
+    margin-bottom: 14px;
+  }
+
+  /* ─── RAL ─── */
+  .ral-search-wrap { position: relative; margin-bottom: 10px; }
+  .ral-search-wrap svg { position: absolute; left: 12px; top: 50%; transform: translateY(-50%); width: 16px; height: 16px; stroke: var(--muted); fill: none; stroke-width: 1.5; stroke-linecap: round; }
+  .ral-search {
+    width: 100%; height: 44px;
+    background: var(--card); border: 1px solid var(--border);
+    border-radius: 10px; color: var(--dark);
+    font-family: 'Manrope', sans-serif; font-size: 14px;
+    padding: 0 12px 0 38px; outline: none;
+    transition: border-color .2s;
+  }
+  .ral-search:focus { border-color: var(--red); }
+
+  .ral-chips {
+    display: flex; gap: 6px; overflow-x: auto; scrollbar-width: none;
+    padding-bottom: 2px; margin-bottom: 12px;
+  }
+  .ral-chips::-webkit-scrollbar { display: none; }
+  .ral-chip {
+    flex-shrink: 0; padding: 5px 12px;
+    font-size: 11px; font-weight: 600;
+    border: 1px solid var(--border2); border-radius: 20px;
+    background: var(--card); color: var(--mid);
+    cursor: pointer; transition: all .15s;
+    font-family: 'Manrope', sans-serif;
+  }
+  .ral-chip.active { background: var(--dark); color: #fff; border-color: var(--dark); }
+
+  .ral-grid {
+    display: grid; grid-template-columns: repeat(5, 1fr);
+    gap: 5px; max-height: 340px; overflow-y: auto;
+    scrollbar-width: thin; margin-bottom: 12px;
+  }
+  .swatch {
+    border-radius: 8px; overflow: hidden;
+    border: 1.5px solid transparent; cursor: pointer;
+    transition: transform .15s, border-color .15s;
+  }
+  .swatch:active { transform: scale(.94); }
+  .swatch.sel { border-color: var(--red); }
+  .swatch-color { height: 44px; }
+  .swatch-code {
+    font-size: 9px; font-weight: 600; text-align: center;
+    padding: 3px 2px; background: var(--card);
+    color: var(--mid); letter-spacing: .02em;
+  }
+
+  .ral-picked {
+    background: var(--card); border: 1px solid var(--border);
+    border-radius: 12px; padding: 14px;
+    display: flex; align-items: center; gap: 12px;
+  }
+  .ral-picked-swatch {
+    width: 44px; height: 44px; border-radius: 8px; flex-shrink: 0;
+    border: 1px solid var(--border2);
+  }
+  .ral-picked-name { font-size: 14px; font-weight: 600; color: var(--dark); }
+  .ral-picked-code { font-size: 12px; color: var(--muted); margin-top: 2px; }
+  .ral-picked-avail {
+    font-size: 11px; color: var(--red); margin-top: 4px; font-weight: 500;
+  }
+
+  /* ─── CHECKLIST ─── */
+  .progress-wrap { margin-bottom: 14px; }
+  .progress-meta { display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; }
+  .progress-label { font-size: 12px; color: var(--muted); }
+  .progress-count { font-size: 12px; font-weight: 600; color: var(--red); }
+  .progress-bar-bg { height: 4px; background: var(--border2); border-radius: 2px; overflow: hidden; }
+  .progress-bar { height: 100%; background: var(--red); border-radius: 2px; transition: width .35s ease; }
+
+  .check-list { display: flex; flex-direction: column; gap: 6px; }
+  .check-row {
+    display: flex; align-items: flex-start; gap: 12px;
+    background: var(--card); border: 1px solid var(--border);
+    border-radius: 10px; padding: 13px 12px;
+    cursor: pointer; transition: border-color .15s, background .15s;
+    -webkit-user-select: none; user-select: none;
+  }
+  .check-row:active { background: var(--surface); }
+  .check-row.done { background: var(--surface); }
+  .check-row.done { border-color: var(--border); }
+  .checkbox {
+    width: 22px; height: 22px; flex-shrink: 0; margin-top: 1px;
+    border: 1.5px solid var(--border2); border-radius: 6px;
+    display: flex; align-items: center; justify-content: center;
+    transition: all .2s;
+  }
+  .check-row.done .checkbox { background: var(--red); border-color: var(--red); }
+  .tick { display: none; }
+  .check-row.done .tick { display: block; }
+  .check-body { flex: 1; min-width: 0; }
+  .check-name {
+    font-size: 13px; font-weight: 600; color: var(--dark); line-height: 1.3;
+    transition: color .15s;
+  }
+  .check-row.done .check-name { color: var(--muted); text-decoration: line-through; text-decoration-color: rgba(0,0,0,.2); }
+  .check-hint { font-size: 11px; color: var(--muted); margin-top: 3px; line-height: 1.5; }
+  .check-cat-tag {
+    display: inline-block; margin-top: 6px;
+    font-size: 10px; font-weight: 500; letter-spacing: .1em; text-transform: uppercase;
+    color: var(--red); background: var(--red-bg);
+    padding: 2px 8px; border-radius: 20px;
+  }
+
+  /* ─── REVIEWS ─── */
+  .rev-card {
+    background: var(--card); border: 1px solid var(--border);
+    border-radius: 12px; padding: 14px; margin-bottom: 8px;
+    transition: border-color .15s;
+  }
+  .rev-card:active { border-color: var(--border2); }
+  .rev-top { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 10px; gap: 8px; }
+  .rev-author { display: flex; align-items: center; gap: 10px; }
+  .rev-ava {
+    width: 36px; height: 36px; border-radius: 50%; flex-shrink: 0;
+    background: var(--surface);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 12px; font-weight: 700; color: var(--mid);
+    letter-spacing: .03em;
+  }
+  .rev-name { font-size: 13px; font-weight: 600; color: var(--dark); }
+  .rev-date { font-size: 11px; color: var(--muted); margin-top: 2px; }
+  .rev-badge {
+    font-size: 10px; font-weight: 600; padding: 3px 10px;
+    border-radius: 20px; white-space: nowrap; flex-shrink: 0;
+  }
+  .badge-ok { background: #e8f5e5; color: #2a7d1a; }
+  .badge-new { background: var(--red-bg); color: var(--red); }
+  .stars { display: flex; gap: 3px; margin-bottom: 8px; }
+  .star-ico { width: 13px; height: 13px; }
+  .rev-text { font-size: 12.5px; color: var(--mid); line-height: 1.7; }
+  .rev-tag {
+    display: inline-block; margin-top: 10px;
+    font-size: 10px; font-weight: 500;
+    background: var(--surface); color: var(--muted);
+    padding: 3px 10px; border-radius: 20px;
+  }
+
+  .rating-summary {
+    background: var(--dark); border-radius: 12px; padding: 16px;
+    display: flex; align-items: center; gap: 16px; margin-bottom: 12px;
+  }
+  .rating-big {
+    font-family: 'Bebas Neue', sans-serif; font-size: 52px; letter-spacing: .02em;
+    color: #fff; line-height: 1; flex-shrink: 0;
+  }
+  .rating-big em { font-size: 24px; color: rgba(255,255,255,.4); font-style: normal; }
+  .rating-bars { flex: 1; }
+  .rbar-row { display: flex; align-items: center; gap: 8px; margin-bottom: 5px; }
+  .rbar-num { font-size: 10px; color: rgba(255,255,255,.4); width: 8px; flex-shrink: 0; }
+  .rbar-bg { flex: 1; height: 4px; background: rgba(255,255,255,.1); border-radius: 2px; overflow: hidden; }
+  .rbar-fill { height: 100%; background: var(--red2); border-radius: 2px; }
+  .rbar-cnt { font-size: 10px; color: rgba(255,255,255,.3); width: 10px; text-align: right; }
+  .rating-total { font-size: 10px; color: rgba(255,255,255,.3); margin-top: 4px; }
+
+  /* ─── CONTACT FORM ─── */
+  .contact-tiles {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 12px;
+  }
+  .contact-tile {
+    background: var(--card); border: 1px solid var(--border);
+    border-radius: 12px; padding: 14px 12px;
+    display: flex; flex-direction: column; gap: 8px;
+    text-decoration: none;
+    transition: border-color .15s;
+  }
+  .contact-tile:active { border-color: var(--red); background: var(--red-bg); }
+  .ct-icon {
+    width: 34px; height: 34px; background: var(--surface);
+    border-radius: 8px; display: flex; align-items: center; justify-content: center;
+  }
+  .ct-icon svg { width: 16px; height: 16px; stroke: var(--red); fill: none; stroke-width: 1.5; stroke-linecap: round; stroke-linejoin: round; }
+  .ct-label { font-size: 10px; color: var(--muted); letter-spacing: .06em; text-transform: uppercase; }
+  .ct-val { font-size: 13px; font-weight: 600; color: var(--dark); line-height: 1.3; }
+  .ct-note { font-size: 10px; color: var(--muted); }
+
+  .form-field { margin-bottom: 10px; }
+  .form-field label { display: block; font-size: 11px; font-weight: 500; color: var(--muted); margin-bottom: 5px; letter-spacing: .05em; }
+  .form-input {
+    width: 100%; height: 44px;
+    background: var(--card); border: 1px solid var(--border);
+    border-radius: 10px; color: var(--dark);
+    font-family: 'Manrope', sans-serif; font-size: 14px; font-weight: 500;
+    padding: 0 13px; outline: none; -webkit-appearance: none;
+    transition: border-color .2s;
+  }
+  .form-input:focus { border-color: var(--red); }
+  .form-textarea {
+    width: 100%; background: var(--card); border: 1px solid var(--border);
+    border-radius: 10px; color: var(--dark);
+    font-family: 'Manrope', sans-serif; font-size: 14px; font-weight: 500;
+    padding: 12px 13px; outline: none; resize: none;
+    transition: border-color .2s;
+  }
+  .form-textarea:focus { border-color: var(--red); }
+  .form-agree { font-size: 11px; color: var(--muted); line-height: 1.6; margin: 10px 0 14px; }
+  .form-agree a { color: var(--red); text-decoration: none; }
+
+  .btn-submit {
+    width: 100%; padding: 14px;
+    background: var(--red); color: #fff;
+    font-family: 'Manrope', sans-serif;
+    font-size: 13px; font-weight: 600; letter-spacing: .1em; text-transform: uppercase;
+    border: none; border-radius: 10px; cursor: pointer;
+    transition: background .2s; display: flex; align-items: center; justify-content: center; gap: 8px;
+  }
+  .btn-submit:active { background: #a93226; }
+  .btn-submit svg { width: 16px; height: 16px; stroke: rgba(255,255,255,.8); fill: none; stroke-width: 2; stroke-linecap: round; }
+
+  .success-msg {
+    display: none; text-align: center; padding: 32px 20px;
+    background: var(--card); border-radius: 14px; border: 1px solid var(--border);
+  }
+  .success-msg.show { display: block; }
+  .success-icon {
+    width: 56px; height: 56px; background: #eaf4e8; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center; margin: 0 auto 16px;
+  }
+  .success-icon svg { width: 28px; height: 28px; stroke: #2a7d1a; fill: none; stroke-width: 2; stroke-linecap: round; }
+  .success-title { font-family: 'Bebas Neue', sans-serif; font-size: 22px; letter-spacing: .04em; color: var(--dark); margin-bottom: 8px; }
+  .success-text { font-size: 13px; color: var(--muted); line-height: 1.7; }
+
+  /* ─── ANIMATIONS ─── */
+  @keyframes fadeUp { from { opacity:0; transform:translateY(12px); } to { opacity:1; transform:translateY(0); } }
+  .page.active > * { animation: fadeUp .3s ease both; }
+  .page.active > *:nth-child(1) { animation-delay: 0s; }
+  .page.active > *:nth-child(2) { animation-delay: .04s; }
+  .page.active > *:nth-child(3) { animation-delay: .08s; }
+  .page.active > *:nth-child(4) { animation-delay: .12s; }
+  .page.active > *:nth-child(5) { animation-delay: .16s; }
+  .page.active > *:nth-child(n+6) { animation-delay: .2s; }
+</style>
+</head>
+<body>
+
+<div class="app">
+
+  <!-- HEADER -->
+  <div class="header">
+    <div class="header-top">
+      <div class="logo-box">
+        <svg viewBox="0 0 18 18" fill="none" stroke="#fff" stroke-width="1.4" stroke-linecap="round">
+          <rect x="1" y="1" width="16" height="16"/>
+          <polyline points="1,7 7,7 7,1"/>
+          <polyline points="11,17 11,11 17,11"/>
+        </svg>
+      </div>
+      <div class="logo-info">
+        <span class="logo-name">Центр гибки металла</span>
+        <span class="logo-city">г. Воронеж · пр-т Труда 48/14</span>
+      </div>
+      <a href="tel:+79525430448" class="header-phone" onclick="callPhone(event)">Позвонить</a>
+    </div>
+    <nav class="nav">
+      <button class="nav-btn active" onclick="showPage('home',this)">Главная</button>
+      <button class="nav-btn" onclick="showPage('calc',this)">Калькулятор</button>
+      <button class="nav-btn" onclick="showPage('ral',this)">Цвета RAL</button>
+      <button class="nav-btn" onclick="showPage('checklist',this)">Чек-лист</button>
+      <button class="nav-btn" onclick="showPage('reviews',this)">Отзывы</button>
+      <button class="nav-btn" onclick="showPage('order',this)">Заявка</button>
+    </nav>
+  </div>
+
+  <div class="content">
+
+    <!-- ══════════ HOME ══════════ -->
+    <div class="page active" id="page-home">
+
+      <div class="hero-card">
+        <div class="hero-eyebrow">Производство · Воронеж</div>
+        <div class="hero-title">Фасадные<br><em>металлокассеты</em></div>
+        <div class="hero-desc">Полный цикл — от изготовления и покраски до монтажа. Собственное производство, срок от 1 дня.</div>
+        <div class="hero-stats">
+          <div class="hero-stat">
+            <span class="hero-stat-n">25<em>+</em></span>
+            <span class="hero-stat-l">Лет</span>
+          </div>
+          <div class="hero-stat">
+            <span class="hero-stat-n">1<em>д</em></span>
+            <span class="hero-stat-l">Срок</span>
+          </div>
+          <div class="hero-stat">
+            <span class="hero-stat-n">RAL</span>
+            <span class="hero-stat-l">Цвет</span>
+          </div>
+        </div>
+        <button class="btn-hero" onclick="showPage('order', document.querySelectorAll('.nav-btn')[5])">Оставить заявку</button>
+      </div>
+
+      <div class="quick-grid">
+        <div class="quick-card" onclick="showPage('calc', document.querySelectorAll('.nav-btn')[1])">
+          <div class="quick-icon">
+            <svg viewBox="0 0 24 24"><rect x="4" y="2" width="16" height="20" rx="2"/><line x1="8" y1="10" x2="16" y2="10"/><line x1="8" y1="14" x2="12" y2="14"/></svg>
+          </div>
+          <div class="quick-label">Калькулятор</div>
+          <div class="quick-sub">Рассчитать стоимость</div>
+        </div>
+        <div class="quick-card" onclick="showPage('ral', document.querySelectorAll('.nav-btn')[2])">
+          <div class="quick-icon">
+            <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 3 C12 3 7 8 7 12 C7 14.8 9.2 17 12 17 C14.8 17 17 14.8 17 12 C17 8 12 3 12 3Z"/></svg>
+          </div>
+          <div class="quick-label">Цвета RAL</div>
+          <div class="quick-sub">Подобрать цвет</div>
+        </div>
+        <div class="quick-card" onclick="showPage('checklist', document.querySelectorAll('.nav-btn')[3])">
+          <div class="quick-icon">
+            <svg viewBox="0 0 24 24"><polyline points="9,11 12,14 22,4"/><path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/></svg>
+          </div>
+          <div class="quick-label">Чек-лист</div>
+          <div class="quick-sub">Готов к заказу?</div>
+        </div>
+        <div class="quick-card" onclick="showPage('reviews', document.querySelectorAll('.nav-btn')[4])">
+          <div class="quick-icon">
+            <svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>
+          </div>
+          <div class="quick-label">Отзывы</div>
+          <div class="quick-sub">Что говорят клиенты</div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-title"><span class="card-title-dot"></span>Продукция</div>
+        <div id="products-list"></div>
+      </div>
+
+      <div class="card">
+        <div class="card-title"><span class="card-title-dot"></span>Адрес производства</div>
+        <div style="font-size:13px;color:var(--mid);line-height:1.8;">
+          <div>📍 г. Воронеж, пр-т Труда 48/14</div>
+          <div>🕐 Пн – Пт: 8:00 – 18:00</div>
+          <div>📱 +7 (952) 543-04-48</div>
+          <div>✉️ metall&#45;bis&#64;mail&#46;ru</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══════════ CALCULATOR ══════════ -->
+    <div class="page" id="page-calc">
+      <div class="sec-head">
+        <div class="sec-tag">Расчёт цены</div>
+        <div class="sec-title">Калькулятор металлокассет</div>
+      </div>
+
+      <div class="toggle-row">
+        <button class="toggle-btn active" onclick="setCalcType('cassette',this)">Металлокассета</button>
+        <button class="toggle-btn" onclick="setCalcType('linear',this)">Линеарная панель</button>
+      </div>
+
+      <div class="field-wrap">
+        <label class="field-label">Площадь фасада, м²</label>
+        <input class="field-input" type="number" id="c-area" value="100" min="1" inputmode="numeric" oninput="calcUpdate()">
+      </div>
+
+      <div class="field-wrap">
+        <label class="field-label">Толщина металла</label>
+        <select class="field-select" id="c-thick" onchange="calcUpdate()">
+          <option value="0.5">0,45–0,5 мм</option>
+          <option value="0.7">0,7 мм</option>
+          <option value="1.0" selected>1,0 мм</option>
+          <option value="1.2">1,2 мм</option>
+        </select>
+        <span class="select-arrow"><svg viewBox="0 0 16 16"><polyline points="4,6 8,10 12,6"/></svg></span>
+      </div>
+
+      <div class="field-wrap">
+        <label class="field-label">Тип изделия</label>
+        <select class="field-select" id="c-type" onchange="calcUpdate()">
+          <option value="standard">Рядовая стандартная</option>
+          <option value="nonstandard">Нестандартная (угловая)</option>
+          <option value="bent">Гнутый элемент</option>
+        </select>
+        <span class="select-arrow"><svg viewBox="0 0 16 16"><polyline points="4,6 8,10 12,6"/></svg></span>
+      </div>
+
+      <div class="field-wrap">
+        <label class="field-label">Покраска RAL</label>
+        <select class="field-select" id="c-paint" onchange="calcUpdate()">
+          <option value="0">Без покраски (оцинкованная)</option>
+          <option value="1" selected>С покраской RAL</option>
+        </select>
+        <span class="select-arrow"><svg viewBox="0 0 16 16"><polyline points="4,6 8,10 12,6"/></svg></span>
+      </div>
+
+      <div class="field-wrap">
+        <label class="field-label">Запас материала</label>
+        <select class="field-select" id="c-reserve" onchange="calcUpdate()">
+          <option value="1.05">5% — ровный фасад</option>
+          <option value="1.10" selected>10% — стандарт</option>
+          <option value="1.15">15% — сложный фасад</option>
+        </select>
+        <span class="select-arrow"><svg viewBox="0 0 16 16"><polyline points="4,6 8,10 12,6"/></svg></span>
+      </div>
+
+      <div class="field-wrap">
+        <label class="field-label">Монтаж</label>
+        <select class="field-select" id="c-mont" onchange="calcUpdate()">
+          <option value="0">Только изготовление</option>
+          <option value="350">+ Монтаж (+350 ₽/м²)</option>
+        </select>
+        <span class="select-arrow"><svg viewBox="0 0 16 16"><polyline points="4,6 8,10 12,6"/></svg></span>
+      </div>
+
+      <div class="result-card">
+        <div class="res-col">
+          <span class="res-num" id="r-area">110</span>
+          <span class="res-unit">м²</span>
+          <span class="res-lbl">к заказу</span>
+        </div>
+        <div class="res-col">
+          <span class="res-num accent" id="r-price">214 500</span>
+          <span class="res-unit">₽</span>
+          <span class="res-lbl">итого</span>
+        </div>
+        <div class="res-col">
+          <span class="res-num" id="r-per">1 950</span>
+          <span class="res-unit">₽/м²</span>
+          <span class="res-lbl">за м²</span>
+        </div>
+      </div>
+
+      <p class="calc-note">Расчёт ориентировочный. Точная стоимость зависит от объёма и сложности. Рассчитаем бесплатно в день обращения.</p>
+
+      <button class="btn-submit" onclick="showPage('order', document.querySelectorAll('.nav-btn')[5])">
+        <svg viewBox="0 0 24 24"><path d="M22 2L11 13"/><path d="M22 2L15 22 11 13 2 9z"/></svg>
+        Отправить заявку
+      </button>
+    </div>
+
+    <!-- ══════════ RAL ══════════ -->
+    <div class="page" id="page-ral">
+      <div class="sec-head">
+        <div class="sec-tag">Палитра цветов</div>
+        <div class="sec-title">Подбор цвета RAL</div>
+      </div>
+
+      <div class="ral-search-wrap">
+        <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        <input class="ral-search" id="ral-q" placeholder="Поиск: RAL 3000, красный…" oninput="ralFilter()">
+      </div>
+
+      <div class="ral-chips" id="ral-chips"></div>
+      <div class="ral-grid" id="ral-grid"></div>
+
+      <div class="ral-picked" id="ral-picked" style="display:none">
+        <div class="ral-picked-swatch" id="ral-pswatch"></div>
+        <div>
+          <div class="ral-picked-name" id="ral-pname"></div>
+          <div class="ral-picked-code" id="ral-pcode"></div>
+          <div class="ral-picked-avail">✓ Доступен для заказа</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══════════ CHECKLIST ══════════ -->
+    <div class="page" id="page-checklist">
+      <div class="sec-head">
+        <div class="sec-tag">Подготовка к заказу</div>
+        <div class="sec-title">Чек-лист заказа</div>
+      </div>
+
+      <div class="progress-wrap">
+        <div class="progress-meta">
+          <span class="progress-label">Готовность к заказу</span>
+          <span class="progress-count" id="prog-count">0 / 8</span>
+        </div>
+        <div class="progress-bar-bg"><div class="progress-bar" id="prog-bar" style="width:0%"></div></div>
+      </div>
+
+      <div class="check-list" id="check-list">
+        <div class="check-row" onclick="toggleCheck(this)">
+          <div class="checkbox"><svg class="tick" viewBox="0 0 12 10" width="12" height="10" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round"><polyline points="1,5 4.5,8.5 11,1.5"/></svg></div>
+          <div class="check-body">
+            <div class="check-name">Площадь фасада в м²</div>
+            <div class="check-hint">Общая площадь поверхности под облицовку</div>
+            <span class="check-cat-tag">Размеры</span>
+          </div>
+        </div>
+        <div class="check-row" onclick="toggleCheck(this)">
+          <div class="checkbox"><svg class="tick" viewBox="0 0 12 10" width="12" height="10" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round"><polyline points="1,5 4.5,8.5 11,1.5"/></svg></div>
+          <div class="check-body">
+            <div class="check-name">Чертёж или эскиз здания</div>
+            <div class="check-hint">Схема с окнами, дверями, выступающими элементами</div>
+            <span class="check-cat-tag">Документы</span>
+          </div>
+        </div>
+        <div class="check-row" onclick="toggleCheck(this)">
+          <div class="checkbox"><svg class="tick" viewBox="0 0 12 10" width="12" height="10" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round"><polyline points="1,5 4.5,8.5 11,1.5"/></svg></div>
+          <div class="check-body">
+            <div class="check-name">Цвет по каталогу RAL</div>
+            <div class="check-hint">Код RAL или образец. Поможем подобрать бесплатно</div>
+            <span class="check-cat-tag">Покраска</span>
+          </div>
+        </div>
+        <div class="check-row" onclick="toggleCheck(this)">
+          <div class="checkbox"><svg class="tick" viewBox="0 0 12 10" width="12" height="10" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round"><polyline points="1,5 4.5,8.5 11,1.5"/></svg></div>
+          <div class="check-body">
+            <div class="check-name">Толщина металла</div>
+            <div class="check-hint">0,5 мм — жилые, 0,7–1,0 мм — коммерческие объекты</div>
+            <span class="check-cat-tag">Материал</span>
+          </div>
+        </div>
+        <div class="check-row" onclick="toggleCheck(this)">
+          <div class="checkbox"><svg class="tick" viewBox="0 0 12 10" width="12" height="10" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round"><polyline points="1,5 4.5,8.5 11,1.5"/></svg></div>
+          <div class="check-body">
+            <div class="check-name">Размеры кассет</div>
+            <div class="check-hint">Ширина и высота панели (если заданы проектом)</div>
+            <span class="check-cat-tag">Размеры</span>
+          </div>
+        </div>
+        <div class="check-row" onclick="toggleCheck(this)">
+          <div class="checkbox"><svg class="tick" viewBox="0 0 12 10" width="12" height="10" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round"><polyline points="1,5 4.5,8.5 11,1.5"/></svg></div>
+          <div class="check-body">
+            <div class="check-name">Нужна ли подсистема НВФ</div>
+            <div class="check-hint">Несущая конструкция — алюминий или оцинкованная сталь</div>
+            <span class="check-cat-tag">Комплектация</span>
+          </div>
+        </div>
+        <div class="check-row" onclick="toggleCheck(this)">
+          <div class="checkbox"><svg class="tick" viewBox="0 0 12 10" width="12" height="10" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round"><polyline points="1,5 4.5,8.5 11,1.5"/></svg></div>
+          <div class="check-body">
+            <div class="check-name">Нужен ли монтаж</div>
+            <div class="check-hint">Полный цикл: изготовление + доставка + монтаж</div>
+            <span class="check-cat-tag">Услуги</span>
+          </div>
+        </div>
+        <div class="check-row" onclick="toggleCheck(this)">
+          <div class="checkbox"><svg class="tick" viewBox="0 0 12 10" width="12" height="10" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round"><polyline points="1,5 4.5,8.5 11,1.5"/></svg></div>
+          <div class="check-body">
+            <div class="check-name">Желаемый срок исполнения</div>
+            <div class="check-hint">Укажите срок — делаем от 1 рабочего дня</div>
+            <span class="check-cat-tag">Сроки</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══════════ REVIEWS ══════════ -->
+    <div class="page" id="page-reviews">
+      <div class="sec-head">
+        <div class="sec-tag">Отзывы клиентов</div>
+        <div class="sec-title">Что говорят о нас</div>
+      </div>
+
+      <div class="rating-summary">
+        <div class="rating-big">4.8<em>/5</em></div>
+        <div class="rating-bars">
+          <div class="rbar-row"><span class="rbar-num">5</span><div class="rbar-bg"><div class="rbar-fill" style="width:75%"></div></div><span class="rbar-cnt">3</span></div>
+          <div class="rbar-row"><span class="rbar-num">4</span><div class="rbar-bg"><div class="rbar-fill" style="width:25%"></div></div><span class="rbar-cnt">1</span></div>
+          <div class="rbar-row"><span class="rbar-num">3</span><div class="rbar-bg"><div class="rbar-fill" style="width:0%"></div></div><span class="rbar-cnt">0</span></div>
+          <div class="rbar-row"><span class="rbar-num">2</span><div class="rbar-bg"><div class="rbar-fill" style="width:0%"></div></div><span class="rbar-cnt">0</span></div>
+          <div class="rbar-row"><span class="rbar-num">1</span><div class="rbar-bg"><div class="rbar-fill" style="width:0%"></div></div><span class="rbar-cnt">0</span></div>
+          <div class="rating-total">Всего 4 отзыва</div>
+        </div>
+      </div>
+
+      <div class="rev-card">
+        <div class="rev-top">
+          <div class="rev-author">
+            <div class="rev-ava">ЮМ</div>
+            <div><div class="rev-name">Юлия М.</div><div class="rev-date">Январь 2025</div></div>
+          </div>
+          <span class="rev-badge badge-ok">Проверен</span>
+        </div>
+        <div class="stars">
+          <svg class="star-ico" viewBox="0 0 14 14"><polygon fill="#c0392b" points="7,1 8.8,5.2 13.5,5.2 9.8,8.1 11.2,12.5 7,9.8 2.8,12.5 4.2,8.1 0.5,5.2 5.2,5.2"/></svg>
+          <svg class="star-ico" viewBox="0 0 14 14"><polygon fill="#c0392b" points="7,1 8.8,5.2 13.5,5.2 9.8,8.1 11.2,12.5 7,9.8 2.8,12.5 4.2,8.1 0.5,5.2 5.2,5.2"/></svg>
+          <svg class="star-ico" viewBox="0 0 14 14"><polygon fill="#c0392b" points="7,1 8.8,5.2 13.5,5.2 9.8,8.1 11.2,12.5 7,9.8 2.8,12.5 4.2,8.1 0.5,5.2 5.2,5.2"/></svg>
+          <svg class="star-ico" viewBox="0 0 14 14"><polygon fill="#c0392b" points="7,1 8.8,5.2 13.5,5.2 9.8,8.1 11.2,12.5 7,9.8 2.8,12.5 4.2,8.1 0.5,5.2 5.2,5.2"/></svg>
+          <svg class="star-ico" viewBox="0 0 14 14"><polygon fill="#c0392b" points="7,1 8.8,5.2 13.5,5.2 9.8,8.1 11.2,12.5 7,9.8 2.8,12.5 4.2,8.1 0.5,5.2 5.2,5.2"/></svg>
+        </div>
+        <div class="rev-text">Хотим выразить благодарность ИП Беленову С.И. за качественную продукцию. В сложной ситуации показали себя как надёжные партнёры — руководитель сам проявил инициативу и помог оперативно решить проблему.</div>
+        <span class="rev-tag">Фасадные кассеты</span>
+      </div>
+
+      <div class="rev-card">
+        <div class="rev-top">
+          <div class="rev-author">
+            <div class="rev-ava">СЗ</div>
+            <div><div class="rev-name">Сергей Землянухин</div><div class="rev-date">Ноябрь 2024</div></div>
+          </div>
+          <span class="rev-badge badge-ok">Проверен</span>
+        </div>
+        <div class="stars">
+          <svg class="star-ico" viewBox="0 0 14 14"><polygon fill="#c0392b" points="7,1 8.8,5.2 13.5,5.2 9.8,8.1 11.2,12.5 7,9.8 2.8,12.5 4.2,8.1 0.5,5.2 5.2,5.2"/></svg>
+          <svg class="star-ico" viewBox="0 0 14 14"><polygon fill="#c0392b" points="7,1 8.8,5.2 13.5,5.2 9.8,8.1 11.2,12.5 7,9.8 2.8,12.5 4.2,8.1 0.5,5.2 5.2,5.2"/></svg>
+          <svg class="star-ico" viewBox="0 0 14 14"><polygon fill="#c0392b" points="7,1 8.8,5.2 13.5,5.2 9.8,8.1 11.2,12.5 7,9.8 2.8,12.5 4.2,8.1 0.5,5.2 5.2,5.2"/></svg>
+          <svg class="star-ico" viewBox="0 0 14 14"><polygon fill="#c0392b" points="7,1 8.8,5.2 13.5,5.2 9.8,8.1 11.2,12.5 7,9.8 2.8,12.5 4.2,8.1 0.5,5.2 5.2,5.2"/></svg>
+          <svg class="star-ico" viewBox="0 0 14 14"><polygon fill="#c0392b" points="7,1 8.8,5.2 13.5,5.2 9.8,8.1 11.2,12.5 7,9.8 2.8,12.5 4.2,8.1 0.5,5.2 5.2,5.2"/></svg>
+        </div>
+        <div class="rev-text">Заказ сделали быстро и качественно. Цены приемлемые. Всё точно по размерам, никаких замечаний. Рекомендую.</div>
+        <span class="rev-tag">Линеарные панели</span>
+      </div>
+
+      <div class="rev-card">
+        <div class="rev-top">
+          <div class="rev-author">
+            <div class="rev-ava">МН</div>
+            <div><div class="rev-name">Михаил Н.</div><div class="rev-date">Октябрь 2024</div></div>
+          </div>
+          <span class="rev-badge badge-ok">Проверен</span>
+        </div>
+        <div class="stars">
+          <svg class="star-ico" viewBox="0 0 14 14"><polygon fill="#c0392b" points="7,1 8.8,5.2 13.5,5.2 9.8,8.1 11.2,12.5 7,9.8 2.8,12.5 4.2,8.1 0.5,5.2 5.2,5.2"/></svg>
+          <svg class="star-ico" viewBox="0 0 14 14"><polygon fill="#c0392b" points="7,1 8.8,5.2 13.5,5.2 9.8,8.1 11.2,12.5 7,9.8 2.8,12.5 4.2,8.1 0.5,5.2 5.2,5.2"/></svg>
+          <svg class="star-ico" viewBox="0 0 14 14"><polygon fill="#c0392b" points="7,1 8.8,5.2 13.5,5.2 9.8,8.1 11.2,12.5 7,9.8 2.8,12.5 4.2,8.1 0.5,5.2 5.2,5.2"/></svg>
+          <svg class="star-ico" viewBox="0 0 14 14"><polygon fill="#c0392b" points="7,1 8.8,5.2 13.5,5.2 9.8,8.1 11.2,12.5 7,9.8 2.8,12.5 4.2,8.1 0.5,5.2 5.2,5.2"/></svg>
+          <svg class="star-ico" viewBox="0 0 14 14"><polygon fill="#c0392b" points="7,1 8.8,5.2 13.5,5.2 9.8,8.1 11.2,12.5 7,9.8 2.8,12.5 4.2,8.1 0.5,5.2 5.2,5.2"/></svg>
+        </div>
+        <div class="rev-text">Современное оборудование, грамотные менеджеры. Цены приятно удивили: не дороже, чем в гаражах, но качество на высоте.</div>
+        <span class="rev-tag">ЧПУ производство</span>
+      </div>
+
+      <div class="rev-card">
+        <div class="rev-top">
+          <div class="rev-author">
+            <div class="rev-ava">АВ</div>
+            <div><div class="rev-name">Алексей Воронин</div><div class="rev-date">Март 2025</div></div>
+          </div>
+          <span class="rev-badge badge-new">Новый</span>
+        </div>
+        <div class="stars">
+          <svg class="star-ico" viewBox="0 0 14 14"><polygon fill="#c0392b" points="7,1 8.8,5.2 13.5,5.2 9.8,8.1 11.2,12.5 7,9.8 2.8,12.5 4.2,8.1 0.5,5.2 5.2,5.2"/></svg>
+          <svg class="star-ico" viewBox="0 0 14 14"><polygon fill="#c0392b" points="7,1 8.8,5.2 13.5,5.2 9.8,8.1 11.2,12.5 7,9.8 2.8,12.5 4.2,8.1 0.5,5.2 5.2,5.2"/></svg>
+          <svg class="star-ico" viewBox="0 0 14 14"><polygon fill="#c0392b" points="7,1 8.8,5.2 13.5,5.2 9.8,8.1 11.2,12.5 7,9.8 2.8,12.5 4.2,8.1 0.5,5.2 5.2,5.2"/></svg>
+          <svg class="star-ico" viewBox="0 0 14 14"><polygon fill="#c0392b" points="7,1 8.8,5.2 13.5,5.2 9.8,8.1 11.2,12.5 7,9.8 2.8,12.5 4.2,8.1 0.5,5.2 5.2,5.2"/></svg>
+          <svg class="star-ico" viewBox="0 0 14 14"><polygon fill="rgba(0,0,0,0.12)" points="7,1 8.8,5.2 13.5,5.2 9.8,8.1 11.2,12.5 7,9.8 2.8,12.5 4.2,8.1 0.5,5.2 5.2,5.2"/></svg>
+        </div>
+        <div class="rev-text">Заказывали доборные элементы. Сделали чуть дольше обещанного, но качество отличное. Цвет RAL попал точно в образец. Буду обращаться ещё.</div>
+        <span class="rev-tag">Доборные элементы</span>
+      </div>
+    </div>
+
+    <!-- ══════════ ORDER ══════════ -->
+    <div class="page" id="page-order">
+      <div class="sec-head">
+        <div class="sec-tag">Бесплатно</div>
+        <div class="sec-title">Оставить заявку</div>
+      </div>
+
+      <div class="contact-tiles">
+        <a href="tel:+79525430448" class="contact-tile" onclick="callPhone(event)">
+          <div class="ct-icon"><svg viewBox="0 0 24 24"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.07 9.8a2 2 0 011.72-2.18h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L9.91 15a16 16 0 006.29 6.29l1.56-.64a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7a2 2 0 011.72 2z"/></svg></div>
+          <div class="ct-label">Позвонить</div>
+          <div class="ct-val">+7 (952) 543-04-48</div>
+          <div class="ct-note">WhatsApp</div>
+        </a>
+        <a href="https://api.whatsapp.com/send/?phone=79525430448" class="contact-tile">
+          <div class="ct-icon"><svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg></div>
+          <div class="ct-label">Написать</div>
+          <div class="ct-val">WhatsApp</div>
+          <div class="ct-note">Ответим за час</div>
+        </a>
+      </div>
+
+      <div id="order-form">
+        <div class="form-field">
+          <label>Ваше имя *</label>
+          <input class="form-input" id="f-name" type="text" placeholder="Как вас зовут?">
+        </div>
+        <div class="form-field">
+          <label>Телефон *</label>
+          <input class="form-input" id="f-phone" type="tel" placeholder="+7 (___) ___-__-__" inputmode="tel">
+        </div>
+        <div class="form-field">
+          <label>Сообщение</label>
+          <textarea class="form-textarea" id="f-msg" rows="4" placeholder="Опишите задачу: тип изделия, площадь, цвет RAL, сроки…"></textarea>
+        </div>
+        <p class="form-agree">Нажимая «Отправить», вы соглашаетесь на обработку <a href="#">персональных данных</a></p>
+        <button class="btn-submit" onclick="submitForm()">
+          <svg viewBox="0 0 24 24"><path d="M22 2L11 13"/><path d="M22 2L15 22 11 13 2 9z"/></svg>
+          Отправить заявку
+        </button>
+      </div>
+
+      <div class="success-msg" id="success-msg">
+        <div class="success-icon"><svg viewBox="0 0 24 24"><polyline points="20,6 9,17 4,12"/></svg></div>
+        <div class="success-title">Заявка отправлена!</div>
+        <div class="success-text">Свяжемся с вами в течение 1 часа в рабочее время (пн–пт 8:00–18:00)</div>
+      </div>
+    </div>
+
+  </div><!-- /content -->
+</div><!-- /app -->
+
+<script>
+function callPhone(e) {
+  e.preventDefault();
+  window.location.href = 'tel:+79525430448';
+}
+
+const tg = window.Telegram && window.Telegram.WebApp;
+if (tg) { tg.ready(); tg.expand(); }
+
+function showPage(id, btn) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+  var page = document.getElementById('page-' + id);
+  if (page) page.classList.add('active');
+  if (btn) btn.classList.add('active');
+  document.querySelector('.content').scrollTop = 0;
+}
+
+// Products list
+var products = [
+  { name: 'Фасадные металлокассеты', desc: 'От 1 250 ₽/м²' },
+  { name: 'Линеарные панели', desc: 'По запросу' },
+  { name: 'Доборные и кровельные элементы', desc: 'От 700 ₽/м²' },
+  { name: 'Подсистемы для НВФ', desc: 'По запросу' },
+  { name: 'Нестандартные изделия', desc: 'Индивидуально' },
+  { name: 'Порошковая окраска', desc: 'По запросу' },
+];
+var pl = document.getElementById('products-list');
+if (pl) {
+  products.forEach(function(p, i) {
+    var bb = i < products.length - 1 ? '1px solid var(--border)' : 'none';
+    pl.innerHTML += '<div style="display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:' + bb + '">'
+      + '<span style="font-size:13px;font-weight:500;color:var(--dark)">' + p.name + '</span>'
+      + '<span style="font-size:12px;color:var(--red);font-weight:600;white-space:nowrap;margin-left:8px">' + p.desc + '</span>'
+      + '</div>';
+  });
+}
+
+// Calculator
+var PRICES = {
+  '0.5': { standard: 1250, nonstandard: 1400, bent: 700 },
+  '0.7': { standard: 1450, nonstandard: 1650, bent: 900 },
+  '1.0': { standard: 1950, nonstandard: 2100, bent: 1320 },
+  '1.2': { standard: 2200, nonstandard: 2350, bent: 1950 }
+};
+var PAINT_ADD = { '0.5': 250, '0.7': 300, '1.0': 330, '1.2': 0 };
+
+function setCalcType(t, btn) {
+  document.querySelectorAll('.toggle-btn').forEach(function(b) { b.classList.remove('active'); });
+  btn.classList.add('active');
+  calcUpdate();
+}
+
+function calcUpdate() {
+  var area = parseFloat(document.getElementById('c-area').value) || 0;
+  var thick = document.getElementById('c-thick').value;
+  var type = document.getElementById('c-type').value;
+  var paint = document.getElementById('c-paint').value;
+  var reserve = parseFloat(document.getElementById('c-reserve').value);
+  var mont = parseFloat(document.getElementById('c-mont').value);
+  var base = (PRICES[thick] && PRICES[thick][type]) ? PRICES[thick][type] : 1250;
+  var paintAdd = paint === '1' ? (PAINT_ADD[thick] || 0) : 0;
+  var perM2 = base + paintAdd + mont;
+  var totalArea = Math.round(area * reserve);
+  var total = Math.round(totalArea * perM2);
+  document.getElementById('r-area').textContent = totalArea;
+  document.getElementById('r-price').textContent = total.toLocaleString('ru');
+  document.getElementById('r-per').textContent = perM2.toLocaleString('ru');
+}
+calcUpdate();
+
+// RAL palette
+var RAL_COLORS = [
+  {code:'1000',name:'Зеленовато-бежевый',hex:'#CEC1A0'},{code:'1001',name:'Бежевый',hex:'#C9AA73'},
+  {code:'1002',name:'Песочно-жёлтый',hex:'#C8A040'},{code:'1003',name:'Сигнальный жёлтый',hex:'#E8A000'},
+  {code:'1004',name:'Золотисто-жёлтый',hex:'#CC8800'},{code:'1013',name:'Жемчужно-белый',hex:'#E4DDD0'},
+  {code:'1014',name:'Слоновая кость',hex:'#DDD0A0'},{code:'1015',name:'Светло-слоновая кость',hex:'#E8DDB8'},
+  {code:'2001',name:'Красно-оранжевый',hex:'#C04820'},{code:'2002',name:'Алый',hex:'#CC3010'},
+  {code:'2003',name:'Пастельно-оранжевый',hex:'#F07840'},{code:'2004',name:'Чистый оранжевый',hex:'#E85000'},
+  {code:'3000',name:'Огненно-красный',hex:'#B02810'},{code:'3001',name:'Сигнальный красный',hex:'#A02010'},
+  {code:'3002',name:'Карминно-красный',hex:'#A02018'},{code:'3003',name:'Рубиново-красный',hex:'#901818'},
+  {code:'3004',name:'Пурпурно-красный',hex:'#701818'},{code:'3005',name:'Винно-красный',hex:'#581818'},
+  {code:'3009',name:'Оксидно-красный',hex:'#703020'},{code:'3011',name:'Коричнево-красный',hex:'#803020'},
+  {code:'3013',name:'Томатно-красный',hex:'#982818'},{code:'3016',name:'Кораллово-красный',hex:'#B84030'},
+  {code:'3018',name:'Клубнично-красный',hex:'#C03840'},{code:'3020',name:'Транспортно-красный',hex:'#C02020'},
+  {code:'3027',name:'Малиново-красный',hex:'#B02040'},{code:'3028',name:'Чистый красный',hex:'#CC2818'},
+  {code:'4001',name:'Красно-сиреневый',hex:'#906080'},{code:'4002',name:'Красно-фиолетовый',hex:'#904060'},
+  {code:'4005',name:'Голубовато-сиреневый',hex:'#808090'},{code:'4006',name:'Транспортно-пурпурный',hex:'#900060'},
+  {code:'4008',name:'Сигнально-фиолетовый',hex:'#901878'},{code:'4009',name:'Пастельно-фиолетовый',hex:'#A07898'},
+  {code:'5000',name:'Фиолетово-синий',hex:'#285080'},{code:'5001',name:'Зелёно-синий',hex:'#205070'},
+  {code:'5002',name:'Ультрамарин-синий',hex:'#003070'},{code:'5003',name:'Сапфирово-синий',hex:'#1C3060'},
+  {code:'5005',name:'Сигнальный синий',hex:'#005090'},{code:'5007',name:'Бриллиантово-синий',hex:'#407090'},
+  {code:'5010',name:'Горечавково-синий',hex:'#003C70'},{code:'5012',name:'Голубой',hex:'#4888A8'},
+  {code:'5015',name:'Небесно-синий',hex:'#2870A8'},{code:'5017',name:'Транспортно-синий',hex:'#006090'},
+  {code:'5021',name:'Водяной синий',hex:'#187878'},{code:'5022',name:'Ночной синий',hex:'#201848'},
+  {code:'6001',name:'Изумрудно-зелёный',hex:'#286038'},{code:'6002',name:'Лиственно-зелёный',hex:'#285020'},
+  {code:'6005',name:'Мохово-зелёный',hex:'#1E4030'},{code:'6009',name:'Пихтово-зелёный',hex:'#203020'},
+  {code:'6010',name:'Травяной зелёный',hex:'#387030'},{code:'6011',name:'Зелёный резеда',hex:'#608050'},
+  {code:'6016',name:'Бирюзово-зелёный',hex:'#207050'},{code:'6017',name:'Майский зелёный',hex:'#488040'},
+  {code:'6018',name:'Жёлто-зелёный',hex:'#60A040'},{code:'6019',name:'Бело-зелёный',hex:'#B8D8A0'},
+  {code:'6024',name:'Транспортно-зелёный',hex:'#308050'},{code:'6029',name:'Мятно-зелёный',hex:'#207840'},
+  {code:'7000',name:'Беличий серый',hex:'#788890'},{code:'7001',name:'Серебристо-серый',hex:'#8C9898'},
+  {code:'7004',name:'Сигнальный серый',hex:'#989898'},{code:'7005',name:'Мышиный серый',hex:'#686860'},
+  {code:'7011',name:'Железно-серый',hex:'#505458'},{code:'7012',name:'Базальтово-серый',hex:'#4C5458'},
+  {code:'7015',name:'Сланцево-серый',hex:'#505060'},{code:'7016',name:'Антрацитово-серый',hex:'#383C40'},
+  {code:'7021',name:'Чёрно-серый',hex:'#2C3030'},{code:'7024',name:'Графитовый серый',hex:'#484C50'},
+  {code:'7030',name:'Каменный серый',hex:'#909080'},{code:'7031',name:'Сине-серый',hex:'#607080'},
+  {code:'7032',name:'Галечный серый',hex:'#B0A890'},{code:'7035',name:'Светло-серый',hex:'#C8C8C0'},
+  {code:'7037',name:'Пылевато-серый',hex:'#787870'},{code:'7038',name:'Агатовый серый',hex:'#B0B0A8'},
+  {code:'7040',name:'Окно-серый',hex:'#989898'},{code:'7042',name:'Транспортно-серый А',hex:'#909090'},
+  {code:'7043',name:'Транспортно-серый В',hex:'#505050'},{code:'7047',name:'Телегрей 4',hex:'#C0C0C0'},
+  {code:'8001',name:'Охровый коричневый',hex:'#906030'},{code:'8003',name:'Глиняно-коричневый',hex:'#784028'},
+  {code:'8004',name:'Медно-коричневый',hex:'#803028'},{code:'8011',name:'Орехово-коричневый',hex:'#502818'},
+  {code:'8012',name:'Красно-коричневый',hex:'#601818'},{code:'8017',name:'Шоколадно-коричневый',hex:'#382018'},
+  {code:'8019',name:'Серо-коричневый',hex:'#382818'},{code:'8022',name:'Чёрно-коричневый',hex:'#181010'},
+  {code:'8024',name:'Бежево-коричневый',hex:'#805840'},{code:'8028',name:'Землисто-коричневый',hex:'#483020'},
+  {code:'9001',name:'Кремово-белый',hex:'#F0E8D0'},{code:'9002',name:'Серо-белый',hex:'#E0DCD0'},
+  {code:'9003',name:'Сигнальный белый',hex:'#F0F0E8'},{code:'9004',name:'Сигнальный чёрный',hex:'#282828'},
+  {code:'9005',name:'Чёрный янтарь',hex:'#101010'},{code:'9006',name:'Бело-алюминий',hex:'#A0A0A0'},
+  {code:'9007',name:'Серо-алюминий',hex:'#888880'},{code:'9010',name:'Чистый белый',hex:'#F8F4E8'},
+  {code:'9011',name:'Графитово-чёрный',hex:'#282828'},{code:'9016',name:'Транспортно-белый',hex:'#F0F0F0'},
+  {code:'9017',name:'Транспортно-чёрный',hex:'#202020'},{code:'9018',name:'Белый Papyrus',hex:'#D8D0C0'}
+];
+
+var RAL_FAMILIES = [
+  {id:'all',label:'Все'},{id:'1',label:'Жёлтые'},{id:'2',label:'Оранжевые'},
+  {id:'3',label:'Красные'},{id:'4',label:'Фиолетовые'},{id:'5',label:'Синие'},
+  {id:'6',label:'Зелёные'},{id:'7',label:'Серые'},{id:'8',label:'Коричневые'},
+  {id:'9',label:'Белые/Чёрные'}
+];
+
+var ralFamily = 'all';
+var ralQuery = '';
+var ralSelected = null;
+
+function buildRalChips() {
+  var c = document.getElementById('ral-chips');
+  if (!c) return;
+  c.innerHTML = '';
+  RAL_FAMILIES.forEach(function(f) {
+    var btn = document.createElement('button');
+    btn.className = 'ral-chip' + (f.id === 'all' ? ' active' : '');
+    btn.textContent = f.label;
+    btn.onclick = function() {
+      ralFamily = f.id;
+      document.querySelectorAll('.ral-chip').forEach(function(b) { b.classList.remove('active'); });
+      btn.classList.add('active');
+      renderRal();
+    };
+    c.appendChild(btn);
+  });
+}
+
+function ralFilter() {
+  ralQuery = document.getElementById('ral-q').value.toLowerCase();
+  renderRal();
+}
+
+function renderRal() {
+  var grid = document.getElementById('ral-grid');
+  if (!grid) return;
+  grid.innerHTML = '';
+  var filtered = RAL_COLORS.filter(function(c) {
+    var famOk = ralFamily === 'all' || c.code.charAt(0) === ralFamily;
+    var qOk = !ralQuery || c.code.indexOf(ralQuery) >= 0 || c.name.toLowerCase().indexOf(ralQuery) >= 0;
+    return famOk && qOk;
+  });
+  filtered.slice(0, 80).forEach(function(c) {
+    var sw = document.createElement('div');
+    sw.className = 'swatch' + (ralSelected === c.code ? ' sel' : '');
+    sw.innerHTML = '<div class="swatch-color" style="background:' + c.hex + '"></div>'
+      + '<div class="swatch-code">RAL ' + c.code + '</div>';
+    sw.onclick = function() { selectRal(c); };
+    grid.appendChild(sw);
+  });
+}
+
+function selectRal(c) {
+  ralSelected = c.code;
+  renderRal();
+  var bar = document.getElementById('ral-picked');
+  if (!bar) return;
+  document.getElementById('ral-pswatch').style.background = c.hex;
+  document.getElementById('ral-pname').textContent = c.name;
+  document.getElementById('ral-pcode').textContent = 'RAL ' + c.code + ' · ' + c.hex;
+  bar.style.display = 'flex';
+  if (tg && tg.HapticFeedback) tg.HapticFeedback.selectionChanged();
+}
+
+buildRalChips();
+renderRal();
+
+// Checklist
+function toggleCheck(row) {
+  row.classList.toggle('done');
+  updateProgress();
+  if (tg && tg.HapticFeedback) {
+    if (row.classList.contains('done')) tg.HapticFeedback.notificationOccurred('success');
+    else tg.HapticFeedback.selectionChanged();
+  }
+}
+
+function updateProgress() {
+  var rows = document.querySelectorAll('.check-row');
+  var done = document.querySelectorAll('.check-row.done').length;
+  var total = rows.length;
+  document.getElementById('prog-bar').style.width = Math.round(done / total * 100) + '%';
+  document.getElementById('prog-count').textContent = done + ' / ' + total;
+}
+
+// Form submit
+function submitForm() {
+  var name = document.getElementById('f-name').value.trim();
+  var phone = document.getElementById('f-phone').value.trim();
+  if (!name || !phone) {
+    if (tg && tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('error');
+    alert('Пожалуйста, заполните имя и телефон');
+    return;
+  }
+  document.getElementById('order-form').style.display = 'none';
+  document.getElementById('success-msg').classList.add('show');
+  if (tg) {
+    if (tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('success');
+    tg.sendData(JSON.stringify({ name: name, phone: phone, msg: document.getElementById('f-msg').value }));
+  }
+}
+</script>
+</body>
+</html>
